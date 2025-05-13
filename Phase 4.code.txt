@@ -1,0 +1,68 @@
+import time
+import random
+import json
+from datetime import datetime
+
+class SmartBin:
+    def _init_(self, bin_id="BIN001"):
+        self.bin_id = bin_id
+        self.reading_number = 1
+
+    def simulate_sensor_read(self):
+        """Simulates ultrasonic sensor reading (0–100%)."""
+        return random.randint(0, 100)
+
+    def get_status(self, fill_level):
+        """Determines bin status based on fill level."""
+        if fill_level == 0:
+            return "Empty"
+        elif fill_level <= 30:
+            return "Low"
+        elif fill_level <= 60:
+            return "Medium"
+        elif fill_level <= 80:
+            return "High"
+        else:
+            return "Full"
+
+    def alert_message(self, fill_level):
+        """Returns appropriate alert message based on fill level."""
+        if fill_level > 80:
+            return "ALERT: Bin is almost full. Schedule a collection."
+        elif fill_level <= 10:
+            return "Notice: Bin is mostly empty."
+        else:
+            return "Status: No immediate action required."
+
+    def send_to_server(self, fill_level, status):
+        """Simulates sending data to a remote server (prints JSON)."""
+        data = {
+            "bin_id": self.bin_id,
+            "timestamp": datetime.now().isoformat(),
+            "fill_level": fill_level,
+            "status": status
+        }
+        print("Sending data to server:", json.dumps(data))
+
+    def run(self):
+        """Runs the simulation loop."""
+        try:
+            while True:
+                fill_level = self.simulate_sensor_read()
+                status = self.get_status(fill_level)
+
+                print(f"\nReading #{self.reading_number} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                print(f"Fill Level: {fill_level}%")
+                print(f"Bin Status: {status}")
+                print(self.alert_message(fill_level))
+
+                self.send_to_server(fill_level, status)
+
+                self.reading_number += 1
+                time.sleep(5)
+        except KeyboardInterrupt:
+            print("\nSimulation stopped manually.")
+
+if _name_ == "_main_":
+    bin_simulator = SmartBin()
+    bin_simulator.run()
