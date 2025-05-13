@@ -1,0 +1,44 @@
+import time
+import random
+from datetime import datetime
+
+def simulate_sensor_read():
+    """Simulates reading from an ultrasonic sensor (fill level in %)."""
+    return random.randint(0, 100)  # Simulate a random fill level
+
+def get_bin_status(fill_level):
+    """Returns a status message based on the fill level."""
+    if fill_level == 0:
+        return "Empty"
+    elif fill_level <= 30:
+        return "Low"
+    elif fill_level <= 60:
+        return "Medium"
+    elif fill_level <= 80:
+        return "High"
+    else:
+        return "Full"
+
+def process_data(fill_level, reading_number):
+    """Processes and displays fill level data with a status and alert."""
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    status = get_bin_status(fill_level)
+
+    print(f"📊 Reading #{reading_number} - {timestamp}")
+    print(f"🗑 Fill Level: {fill_level}%")
+    print(f"📈 Bin Status: {status}")
+
+    if fill_level > 80:
+        print("⚠ ALERT: Garbage bin is almost full! Send for collection.\n")
+    elif fill_level <= 10:
+        print("ℹ Bin is mostly empty.\n")
+    else:
+        print("✅ No action needed.\n")
+
+if _name_ == "_main_":
+    reading_number = 1
+    while True:
+        fill_level = simulate_sensor_read()
+        process_data(fill_level, reading_number)
+        reading_number += 1
+        time.sleep(5)  # Read every 5 seconds
